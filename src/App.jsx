@@ -9,8 +9,33 @@ import {
   Subscribe,
 } from "./sections";
 import Nav from "./components/Nav";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    const cards = document.querySelectorAll(".card-animate");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("opacity-0", "translate-y-[-20px]");
+            entry.target.classList.add("opacity-100", "translate-y-0");
+            // Optional: Unobserve after animation
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    return () => {
+      // Cleanup observer
+      cards.forEach((card) => observer.unobserve(card));
+    };
+  }, []);
   return (
     <main>
       <Nav />
